@@ -2176,25 +2176,20 @@ export class OpenClawRuntimeAdapter extends EventEmitter implements CoworkRuntim
       firstNewIdx = cursor;
     }
 
-    // Append messages from firstNewIdx onwards
+    // Append messages from firstNewIdx onwards.
+    // Only sync user messages here — assistant messages are already added by the
+    // real-time streaming pipeline (handleChatDelta / handleAgentEvent) and by
+    // syncFinalAssistantWithHistory's own addMessage/updateMessage logic.
     let syncedCount = 0;
     for (let i = firstNewIdx; i < historyEntries.length; i++) {
       const entry = historyEntries[i];
-      if (entry.role === 'user') {
-        const userMessage = this.store.addMessage(sessionId, {
-          type: 'user',
-          content: entry.text,
-          metadata: {},
-        });
-        this.emit('message', sessionId, userMessage);
-      } else {
-        const assistantMessage = this.store.addMessage(sessionId, {
-          type: 'assistant',
-          content: entry.text,
-          metadata: { isStreaming: false, isFinal: true },
-        });
-        this.emit('message', sessionId, assistantMessage);
-      }
+      if (entry.role !== 'user') continue;
+      const userMessage = this.store.addMessage(sessionId, {
+        type: 'user',
+        content: entry.text,
+        metadata: {},
+      });
+      this.emit('message', sessionId, userMessage);
       syncedCount++;
     }
     this.channelSyncCursor.set(sessionId, historyEntries.length);
