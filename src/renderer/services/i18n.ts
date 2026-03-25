@@ -528,7 +528,6 @@ const translations: Record<LanguageType, Record<string, string>> = {
     newVersion: '新版本',
     installing: '安装中...',
     overwriteInstall: '覆盖安装',
-    renameInstall: '重命名安装',
 
     // Security scan
     lobsterGuardEnabled: '安全防护中',
@@ -1639,7 +1638,6 @@ const translations: Record<LanguageType, Record<string, string>> = {
     newVersion: 'New Version',
     installing: 'Installing...',
     overwriteInstall: 'Overwrite Install',
-    renameInstall: 'Rename Install',
 
     // Security scan
     lobsterGuardEnabled: 'Security Active',

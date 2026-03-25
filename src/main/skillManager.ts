@@ -1689,7 +1689,7 @@ export class SkillManager {
 
   confirmPendingInstall(
     pendingId: string,
-    action: SecurityReportAction | 'overwrite' | 'rename'
+    action: SecurityReportAction | 'overwrite'
   ): { success: boolean; skills?: SkillRecord[]; error?: string } {
     console.log(`[SkillManager] confirmPendingInstall: id=${pendingId}, action=${action}`);
     const pending = this.pendingInstalls.get(pendingId);
