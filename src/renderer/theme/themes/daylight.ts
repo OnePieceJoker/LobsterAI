@@ -23,7 +23,7 @@ export const daylight: ThemeDefinition = {
     'surface-foreground': '#1c1917',
     'surface-raised':     '#fef3c7',
     'surface-overlay':    'rgba(254,243,199,0.92)',
-    'chat-user':          '#fef3c7',
+    'chat-user':          '#fde68a',
     'chat-user-foreground': '#78350f',
     'chat-bot':           '#fefce8',
     'chat-bot-foreground': '#1c1917',

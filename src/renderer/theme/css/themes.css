@@ -60,7 +60,7 @@
   --lobster-surface-foreground: #1c1917;
   --lobster-surface-raised: #fef3c7;
   --lobster-surface-overlay: rgba(254,243,199,0.92);
-  --lobster-chat-user: #fef3c7;
+  --lobster-chat-user: #fde68a;
   --lobster-chat-user-foreground: #78350f;
   --lobster-chat-bot: #fefce8;
   --lobster-chat-bot-foreground: #1c1917;
@@ -236,8 +236,8 @@
   --lobster-primary-foreground: #ffffff;
   --lobster-primary-hover: #38bdf8;
   --lobster-primary-muted: rgba(14,165,233,0.12);
-  --lobster-accent: #06b6d4;
-  --lobster-accent-foreground: #ffffff;
+  --lobster-accent: #2dd4bf;
+  --lobster-accent-foreground: #0c1222;
   --lobster-background: #0c1222;
   --lobster-foreground: #e0f2fe;
   --lobster-surface: #172032;
@@ -249,8 +249,8 @@
   --lobster-chat-bot: #172032;
   --lobster-chat-bot-foreground: #e0f2fe;
   --lobster-text-primary: #f0f9ff;
-  --lobster-text-secondary: #7dd3fc;
-  --lobster-text-muted: #38bdf8;
+  --lobster-text-secondary: #9ab8c8;
+  --lobster-text-muted: #627f8e;
   --lobster-border: rgba(30,48,72,0.7);
   --lobster-border-subtle: rgba(30,48,72,0.35);
   --lobster-input-border: rgba(30,48,72,0.7);
@@ -282,8 +282,8 @@
   --lobster-primary-foreground: #ffffff;
   --lobster-primary-hover: #34d399;
   --lobster-primary-muted: rgba(16,185,129,0.12);
-  --lobster-accent: #6ee7b7;
-  --lobster-accent-foreground: #064e3b;
+  --lobster-accent: #67e8f9;
+  --lobster-accent-foreground: #0a1a14;
   --lobster-background: #0a1a14;
   --lobster-foreground: #d1fae5;
   --lobster-surface: #14352a;
@@ -295,8 +295,8 @@
   --lobster-chat-bot: #14352a;
   --lobster-chat-bot-foreground: #d1fae5;
   --lobster-text-primary: #ecfdf5;
-  --lobster-text-secondary: #6ee7b7;
-  --lobster-text-muted: #34d399;
+  --lobster-text-secondary: #8cb8a2;
+  --lobster-text-muted: #5e8a72;
   --lobster-border: rgba(26,74,58,0.7);
   --lobster-border-subtle: rgba(26,74,58,0.35);
   --lobster-input-border: rgba(26,74,58,0.7);
@@ -328,8 +328,8 @@
   --lobster-primary-foreground: #ffffff;
   --lobster-primary-hover: #fb7185;
   --lobster-primary-muted: rgba(244,63,94,0.12);
-  --lobster-accent: #fda4af;
-  --lobster-accent-foreground: #881337;
+  --lobster-accent: #f0abfc;
+  --lobster-accent-foreground: #1a0a10;
   --lobster-background: #1a0a10;
   --lobster-foreground: #ffe4e6;
   --lobster-surface: #35141e;
@@ -341,8 +341,8 @@
   --lobster-chat-bot: #35141e;
   --lobster-chat-bot-foreground: #ffe4e6;
   --lobster-text-primary: #fff1f2;
-  --lobster-text-secondary: #fda4af;
-  --lobster-text-muted: #fb7185;
+  --lobster-text-secondary: #c49aa4;
+  --lobster-text-muted: #8a5a64;
   --lobster-border: rgba(74,26,42,0.7);
   --lobster-border-subtle: rgba(74,26,42,0.35);
   --lobster-input-border: rgba(74,26,42,0.7);
@@ -374,8 +374,8 @@
   --lobster-primary-foreground: #ffffff;
   --lobster-primary-hover: #f59e0b;
   --lobster-primary-muted: rgba(217,119,6,0.12);
-  --lobster-accent: #fbbf24;
-  --lobster-accent-foreground: #78350f;
+  --lobster-accent: #a78bfa;
+  --lobster-accent-foreground: #1a1210;
   --lobster-background: #1a1210;
   --lobster-foreground: #fef3c7;
   --lobster-surface: #2c2018;
@@ -387,8 +387,8 @@
   --lobster-chat-bot: #2c2018;
   --lobster-chat-bot-foreground: #fef3c7;
   --lobster-text-primary: #fffbeb;
-  --lobster-text-secondary: #fbbf24;
-  --lobster-text-muted: #f59e0b;
+  --lobster-text-secondary: #bfa888;
+  --lobster-text-muted: #7a6a50;
   --lobster-border: rgba(61,44,30,0.7);
   --lobster-border-subtle: rgba(61,44,30,0.35);
   --lobster-input-border: rgba(61,44,30,0.7);
@@ -420,8 +420,8 @@
   --lobster-primary-foreground: #ffffff;
   --lobster-primary-hover: #fb923c;
   --lobster-primary-muted: rgba(249,115,22,0.12);
-  --lobster-accent: #fdba74;
-  --lobster-accent-foreground: #7c2d12;
+  --lobster-accent: #fb7185;
+  --lobster-accent-foreground: #1a0e0a;
   --lobster-background: #1a0e0a;
   --lobster-foreground: #ffedd5;
   --lobster-surface: #2c1a10;
@@ -433,8 +433,8 @@
   --lobster-chat-bot: #2c1a10;
   --lobster-chat-bot-foreground: #ffedd5;
   --lobster-text-primary: #fff7ed;
-  --lobster-text-secondary: #fdba74;
-  --lobster-text-muted: #fb923c;
+  --lobster-text-secondary: #c4a08a;
+  --lobster-text-muted: #8a6a50;
   --lobster-border: rgba(61,36,20,0.7);
   --lobster-border-subtle: rgba(61,36,20,0.35);
   --lobster-input-border: rgba(61,36,20,0.7);

@@ -34,7 +34,14 @@ module.exports = plugin(function () {
           foreground:  'var(--lobster-surface-foreground)',
           raised:      'var(--lobster-surface-raised)',
           overlay:     'var(--lobster-surface-overlay)',
+          inset:       'var(--lobster-surface-raised)',  // alias
         },
+        border: {
+          DEFAULT:     'var(--lobster-border)',
+          subtle:      'var(--lobster-border-subtle)',
+          input:       'var(--lobster-input-border)',
+        },
+        muted:         'var(--lobster-text-muted)',
         destructive: {
           DEFAULT:     'var(--lobster-destructive)',
           foreground:  'var(--lobster-destructive-foreground)',
