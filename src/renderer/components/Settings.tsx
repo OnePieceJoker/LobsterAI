@@ -28,7 +28,8 @@ import type {
 import IMSettings from './im/IMSettings';
 import { imService } from '../services/im';
 import EmailSkillConfig from './skills/EmailSkillConfig';
-import { defaultConfig, type AppConfig, getVisibleProviders, isCustomProvider, getCustomProviderDefaultName, getProviderDisplayName } from '../config';
+import { ProviderRegistry, resolveCodingPlanBaseUrl } from '../../shared/providers';
+import { defaultConfig, type AppConfig, getVisibleProviders, isCustomProvider, getCustomProviderDefaultName,getProviderDisplayName } from '../config';
 import {
   OpenAIIcon,
   DeepSeekIcon,
@@ -80,6 +81,7 @@ const providerKeys = [
   'xiaomi',
   'openrouter',
   'ollama',
+  'custom',
   ...CUSTOM_PROVIDER_KEYS,
 ] as const;
 
@@ -151,48 +153,10 @@ const providerMeta: Record<ProviderType, { label: string; icon: React.ReactNode 
   volcengine: { label: 'Volcengine', icon: <VolcengineIcon /> },
   openrouter: { label: 'OpenRouter', icon: <OpenRouterIcon /> },
   ollama: { label: 'Ollama', icon: <OllamaIcon /> },
+  custom: { label: 'Custom', icon: <CustomProviderIcon /> },
   ...Object.fromEntries(
     CUSTOM_PROVIDER_KEYS.map(key => [key, { label: getCustomProviderDefaultName(key), icon: <CustomProviderIcon /> }])
   ) as Record<(typeof CUSTOM_PROVIDER_KEYS)[number], { label: string; icon: React.ReactNode }>,
-};
-
-const providerSwitchableDefaultBaseUrls: Partial<Record<ProviderType, { anthropic: string; openai: string }>> = {
-  deepseek: {
-    anthropic: 'https://api.deepseek.com/anthropic',
-    openai: 'https://api.deepseek.com',
-  },
-  moonshot: {
-    anthropic: 'https://api.moonshot.cn/anthropic',
-    openai: 'https://api.moonshot.cn/v1',
-  },
-  zhipu: {
-    anthropic: 'https://open.bigmodel.cn/api/anthropic',
-    openai: 'https://open.bigmodel.cn/api/paas/v4',
-  },
-  minimax: {
-    anthropic: 'https://api.minimaxi.com/anthropic',
-    openai: 'https://api.minimaxi.com/v1',
-  },
-  qwen: {
-    anthropic: 'https://dashscope.aliyuncs.com/apps/anthropic',
-    openai: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-  },
-  xiaomi: {
-    anthropic: 'https://api.xiaomimimo.com/anthropic',
-    openai: 'https://api.xiaomimimo.com/v1/chat/completions',
-  },
-  volcengine: {
-    anthropic: 'https://ark.cn-beijing.volces.com/api/compatible',
-    openai: 'https://ark.cn-beijing.volces.com/api/v3',
-  },
-  openrouter: {
-    anthropic: 'https://openrouter.ai/api',
-    openai: 'https://openrouter.ai/api/v1',
-  },
-  ollama: {
-    anthropic: 'http://localhost:11434',
-    openai: 'http://localhost:11434/v1',
-  },
 };
 
 const providerRequiresApiKey = (provider: ProviderType) => provider !== 'ollama';
@@ -298,8 +262,8 @@ const getProviderDefaultBaseUrl = (
   provider: ProviderType,
   apiFormat: 'anthropic' | 'openai' | 'gemini'
 ): string | null => {
-  const defaults = providerSwitchableDefaultBaseUrls[provider];
-  return defaults ? defaults[apiFormat as 'anthropic' | 'openai'] : null;
+  if (apiFormat === 'gemini') return null;
+  return ProviderRegistry.getSwitchableBaseUrl(provider, apiFormat) ?? null;
 };
 const resolveBaseUrl = (
   provider: ProviderType,
@@ -312,15 +276,16 @@ const resolveBaseUrl = (
     || '';
 };
 const shouldAutoSwitchProviderBaseUrl = (provider: ProviderType, currentBaseUrl: string): boolean => {
-  const defaults = providerSwitchableDefaultBaseUrls[provider];
-  if (!defaults) {
+  const anthropicUrl = ProviderRegistry.getSwitchableBaseUrl(provider, 'anthropic');
+  const openaiUrl = ProviderRegistry.getSwitchableBaseUrl(provider, 'openai');
+  if (!anthropicUrl && !openaiUrl) {
     return false;
   }
 
   const normalizedCurrent = normalizeBaseUrl(currentBaseUrl);
   return (
-    normalizedCurrent === normalizeBaseUrl(defaults.anthropic)
-    || normalizedCurrent === normalizeBaseUrl(defaults.openai)
+    (anthropicUrl ? normalizedCurrent === normalizeBaseUrl(anthropicUrl) : false)
+    || (openaiUrl ? normalizedCurrent === normalizeBaseUrl(openaiUrl) : false)
   );
 };
 const buildOpenAICompatibleChatCompletionsUrl = (baseUrl: string, provider: string): string => {
@@ -1790,41 +1755,11 @@ const Settings: React.FC<SettingsProps> = ({ onClose, initialTab, notice, onUpda
       let effectiveBaseUrl = resolveBaseUrl(testingProvider, providerConfig.baseUrl, getEffectiveApiFormat(testingProvider, providerConfig.apiFormat));
       let effectiveApiFormat = getEffectiveApiFormat(testingProvider, providerConfig.apiFormat);
       
-      // Handle Zhipu GLM Coding Plan endpoint switch
-      if (testingProvider === 'zhipu' && (providerConfig as { codingPlanEnabled?: boolean }).codingPlanEnabled) {
-        if (effectiveApiFormat === 'anthropic') {
-          effectiveBaseUrl = 'https://open.bigmodel.cn/api/anthropic';
-        } else {
-          effectiveBaseUrl = 'https://open.bigmodel.cn/api/coding/paas/v4';
-          effectiveApiFormat = 'openai';
-        }
-      }
-      // Handle Qwen Coding Plan endpoint switch
-      if (testingProvider === 'qwen' && (providerConfig as { codingPlanEnabled?: boolean }).codingPlanEnabled) {
-        if (effectiveApiFormat === 'anthropic') {
-          effectiveBaseUrl = 'https://coding.dashscope.aliyuncs.com/apps/anthropic';
-        } else {
-          effectiveBaseUrl = 'https://coding.dashscope.aliyuncs.com/v1';
-          effectiveApiFormat = 'openai';
-        }
-      }
-      // Handle Volcengine Coding Plan endpoint switch
-      if (testingProvider === 'volcengine' && (providerConfig as { codingPlanEnabled?: boolean }).codingPlanEnabled) {
-        if (effectiveApiFormat === 'anthropic') {
-          effectiveBaseUrl = 'https://ark.cn-beijing.volces.com/api/coding';
-        } else {
-          effectiveBaseUrl = 'https://ark.cn-beijing.volces.com/api/coding/v3';
-          effectiveApiFormat = 'openai';
-        }
-      }
-      // Handle Moonshot Coding Plan endpoint switch
-      if (testingProvider === 'moonshot' && (providerConfig as { codingPlanEnabled?: boolean }).codingPlanEnabled) {
-        if (effectiveApiFormat === 'anthropic') {
-          effectiveBaseUrl = 'https://api.kimi.com/coding';
-        } else {
-          effectiveBaseUrl = 'https://api.kimi.com/coding/v1';
-          effectiveApiFormat = 'openai';
-        }
+      // Handle Coding Plan endpoint switch for supported providers
+      if ((providerConfig as { codingPlanEnabled?: boolean }).codingPlanEnabled && (effectiveApiFormat === 'anthropic' || effectiveApiFormat === 'openai')) {
+        const resolved = resolveCodingPlanBaseUrl(testingProvider, true, effectiveApiFormat, effectiveBaseUrl);
+        effectiveBaseUrl = resolved.baseUrl;
+        effectiveApiFormat = resolved.effectiveFormat;
       }
       
       const normalizedBaseUrl = effectiveBaseUrl.replace(/\/+$/, '');
@@ -2982,23 +2917,16 @@ const Settings: React.FC<SettingsProps> = ({ onClose, initialTab, notice, onUpda
                     type="text"
                     id={`${activeProvider}-baseUrl`}
                     value={
-                      activeProvider === 'zhipu' && providers.zhipu.codingPlanEnabled
-                        ? (getEffectiveApiFormat('zhipu', providers.zhipu.apiFormat) === 'anthropic'
-                            ? 'https://open.bigmodel.cn/api/anthropic'
-                            : 'https://open.bigmodel.cn/api/coding/paas/v4')
-                        : activeProvider === 'qwen' && providers.qwen.codingPlanEnabled
-                          ? (getEffectiveApiFormat('qwen', providers.qwen.apiFormat) === 'anthropic'
-                              ? 'https://coding.dashscope.aliyuncs.com/apps/anthropic'
-                              : 'https://coding.dashscope.aliyuncs.com/v1')
-                          : activeProvider === 'volcengine' && providers.volcengine.codingPlanEnabled
-                            ? (getEffectiveApiFormat('volcengine', providers.volcengine.apiFormat) === 'anthropic'
-                                ? 'https://ark.cn-beijing.volces.com/api/coding'
-                                : 'https://ark.cn-beijing.volces.com/api/coding/v3')
-                            : activeProvider === 'moonshot' && providers.moonshot.codingPlanEnabled
-                              ? (getEffectiveApiFormat('moonshot', providers.moonshot.apiFormat) === 'anthropic'
-                                  ? 'https://api.kimi.com/coding'
-                                  : 'https://api.kimi.com/coding/v1')
-                              : providers[activeProvider].baseUrl
+                      (() => {
+                        const fmt = getEffectiveApiFormat(activeProvider, providers[activeProvider].apiFormat);
+                        if (fmt !== 'gemini') {
+                          const cpUrl = (providers[activeProvider] as { codingPlanEnabled?: boolean }).codingPlanEnabled
+                            ? ProviderRegistry.getCodingPlanUrl(activeProvider, fmt)
+                            : undefined;
+                          if (cpUrl) return cpUrl;
+                        }
+                        return providers[activeProvider].baseUrl;
+                      })()
                     }
                     onChange={(e) => handleProviderConfigChange(activeProvider, 'baseUrl', e.target.value)}
                     disabled={isBaseUrlLocked}
